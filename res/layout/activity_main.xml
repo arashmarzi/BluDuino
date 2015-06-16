@@ -34,16 +34,18 @@
                 android:layout_weight="1"
                 android:text="Get Data" />
         </LinearLayout>
-    </LinearLayout>
 
-    <TextView
-        android:id="@+id/dataTV"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/linearLayout1"
-        android:layout_alignParentBottom="true"
-        android:layout_alignRight="@+id/linearLayout1"
-        android:layout_below="@+id/linearLayout1"
-        android:editable="false" />
+        <ListView
+            android:id="@+id/scanView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+        </ListView>
+
+        <TextView
+            android:id="@+id/dataTV"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:editable="false" />
+    </LinearLayout>
 
 </RelativeLayout>
