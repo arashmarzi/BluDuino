@@ -27,7 +27,7 @@ public class MainActivity extends Activity implements OnItemClickListener {
 	private Button scanBtBtn;
 	private TextView data;
 	private BluetoothAdapter bluetoothAdapter;
-	private ArrayAdapter<String> listAdapter;
+	private ArrayAdapter<String> listViewAdapter;
 	private ListView scanListView;
 	private Set<BluetoothDevice> pairedDevicesSet;
 	private ArrayList<String> pairedDevicesList;
@@ -49,11 +49,24 @@ public class MainActivity extends Activity implements OnItemClickListener {
 				String action = intent.getAction();
 				if(BluetoothDevice.ACTION_FOUND.equals(action)) {
 					BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-					listAdapter.add(device.getName() + "\n" + device.getAddress());
+					
+					String pairedStr = "";
+					String deviceStr = device.getName() + "\n" + device.getAddress();
+					for(int i = 0; i < pairedDevicesList.size(); i++) {
+						if(deviceStr.equals(pairedDevicesList.get(i))) {
+							pairedStr = "(PAIRED)";
+							break;
+						}
+						
+					}
+					
+					listViewAdapter.add(device.getName() + " " + pairedStr + "\n" + device.getAddress());
 				} else if(BluetoothAdapter.ACTION_DISCOVERY_STARTED.equals(action)) {
 					// to be implemented
 				} else if(BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action)) {
-					// to be implemented
+					if(listViewAdapter.getCount() > 0) {
+						
+					}
 				} else if(BluetoothAdapter.ACTION_STATE_CHANGED.equals(action)) {
 					if(bluetoothAdapter.getState() == bluetoothAdapter.STATE_OFF) {
 						turnOnBluetooth();
@@ -90,8 +103,8 @@ public class MainActivity extends Activity implements OnItemClickListener {
 		
 		scanListView = (ListView) this.findViewById(R.id.scanListView);
 		scanListView.setOnItemClickListener(this);
-		listAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, 0);
-		scanListView.setAdapter(listAdapter);
+		listViewAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, 0);
+		scanListView.setAdapter(listViewAdapter);
 		data = (TextView) this.findViewById(R.id.dataTV);
 	}
 
@@ -110,7 +123,7 @@ public class MainActivity extends Activity implements OnItemClickListener {
 		pairedDevicesSet = bluetoothAdapter.getBondedDevices();
 		if(pairedDevicesSet.size() > 0) {
 			for(BluetoothDevice device : pairedDevicesSet) {
-				pairedDevicesList.add(device.getName());
+				pairedDevicesList.add(device.getName() + "\n" + device.getAddress());
 			}
 		}
 		
@@ -160,7 +173,10 @@ public class MainActivity extends Activity implements OnItemClickListener {
 
 	@Override
 	public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
-		// TODO Auto-generated method stub
-		
+		if(listViewAdapter.getItem(arg2).contains("(PAIRED)")) {
+			Toast.makeText(getApplicationContext(), "Device is already paired", Toast.LENGTH_SHORT).show();
+		} else {
+			Toast.makeText(getApplicationContext(), "Device is not paired", Toast.LENGTH_SHORT).show();
+		}
 	}
 }
