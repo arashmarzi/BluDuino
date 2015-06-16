@@ -36,7 +36,7 @@
         </LinearLayout>
 
         <ListView
-            android:id="@+id/scanView"
+            android:id="@+id/scanListView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
         </ListView>

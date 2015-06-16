@@ -14,20 +14,21 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class MainActivity extends Activity {
-
+public class MainActivity extends Activity implements OnItemClickListener {
 	private Button getDataBtn;
 	private Button scanBtBtn;
 	private TextView data;
 	private BluetoothAdapter bluetoothAdapter;
 	private ArrayAdapter<String> listAdapter;
-	private ListView scanView;
+	private ListView scanListView;
 	private Set<BluetoothDevice> pairedDevicesSet;
 	private ArrayList<String> pairedDevicesList;
 	private IntentFilter intentFilterBT;
@@ -50,9 +51,9 @@ public class MainActivity extends Activity {
 					BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
 					listAdapter.add(device.getName() + "\n" + device.getAddress());
 				} else if(BluetoothAdapter.ACTION_DISCOVERY_STARTED.equals(action)) {
-					
+					// to be implemented
 				} else if(BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action)) {
-					
+					// to be implemented
 				} else if(BluetoothAdapter.ACTION_STATE_CHANGED.equals(action)) {
 					if(bluetoothAdapter.getState() == bluetoothAdapter.STATE_OFF) {
 						turnOnBluetooth();
@@ -81,20 +82,28 @@ public class MainActivity extends Activity {
 		}
 		
 		getPairedDevices();
+		startDiscovery();
 
 		// initialize ui widgets
 		getDataBtn = (Button) this.findViewById(R.id.dataBtn);
 		scanBtBtn = (Button) this.findViewById(R.id.scanBtn);
 		
-		scanView = (ListView) this.findViewById(R.id.scanView);
+		scanListView = (ListView) this.findViewById(R.id.scanListView);
+		scanListView.setOnItemClickListener(this);
 		listAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, 0);
-		scanView.setAdapter(listAdapter);
+		scanListView.setAdapter(listAdapter);
 		data = (TextView) this.findViewById(R.id.dataTV);
 	}
 
-	private void turnOnBluetooth() {
-		// TODO Auto-generated method stub
+	private void startDiscovery() {
+		bluetoothAdapter.cancelDiscovery();
+		bluetoothAdapter.startDiscovery();
 		
+	}
+
+	private void turnOnBluetooth() {
+		Intent intent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+		startActivityForResult(intent, 1);
 	}
 
 	private void getPairedDevices() {
@@ -102,7 +111,6 @@ public class MainActivity extends Activity {
 		if(pairedDevicesSet.size() > 0) {
 			for(BluetoothDevice device : pairedDevicesSet) {
 				pairedDevicesList.add(device.getName());
-				//listAdapter.add(device.getName() + "\n" + device.getAddress());
 			}
 		}
 		
@@ -148,5 +156,11 @@ public class MainActivity extends Activity {
 			return true;
 		}
 		return super.onOptionsItemSelected(item);
+	}
+
+	@Override
+	public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
+		// TODO Auto-generated method stub
+		
 	}
 }
